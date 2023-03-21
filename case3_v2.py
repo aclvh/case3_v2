@@ -264,7 +264,7 @@ def rdw_data():
     
     # Voorspelling
     st.write('De voorspelde cilinderinhoud is:', voorspelling_cilinderinhoud)
-    st.write('De echte cilinderinhoud is:')
+    st.write('De echte cilinderinhoud is:', echte_cilinderinhoud)
     
     # Uitleg model
     regressiescore = reg.score(X.values, y.values)
