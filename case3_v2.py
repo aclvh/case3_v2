@@ -240,8 +240,14 @@ def rdw_data():
     ######################################################################################
     df_kenteken = pd.read_csv('df_kenteken.csv')
     
-    kenteken = st.text_input('Kenteken', '0002VK')
+    kenteken = st.text_input('Kenteken', '0001TJ')
     st.write('Het ingevoerde kenteken is: ', kenteken)
+    
+    X = df_model[['emissiecode_omschrijving','aantal_cilinders']]
+    y = df_model['cilinderinhoud']
+    reg = LinearRegression().fit(X.values, y.values)
+    
+    
     
     rij_kenteken = df_kenteken[df_kenteken['kenteken'] == kenteken]
     emissiecode = float(rij_kenteken.iloc[0]['emissiecode_omschrijving'])
