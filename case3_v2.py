@@ -192,7 +192,7 @@ def rdw_data():
     ######################################################################################
     df_fig2 = pd.read_csv('df_fig1.csv')
     
-    fig1 = px.line(df_fig1,
+    fig1 = px.line(df_fig2,
                y = "cum aantal",
                x = "datum",
                color = "brandstof_omschrijving")
@@ -206,7 +206,7 @@ def rdw_data():
     st.plotly_chart(fig1)
     
     ######################################################################################
-    # Regressiemodel met 2 losse plotjes en uit te voeren onderdeel
+    # Regressiemodel met 2 losse plotjes
     ######################################################################################
     df_model = pd.read_csv('df_model.csv')
     
@@ -236,6 +236,20 @@ def rdw_data():
     st.plotly_chart(fig_model2)
     
     ######################################################################################
+    # Regressiemodel uitvoeren
+    ######################################################################################
+    df_kenteken = pd.read_csv('df_kenteken.csv')
+    
+    kenteken = st.text_input('Kenteken', '0002VK')
+    st.write('Het ingevoerde kenteken is: ', kenteken)
+    
+    rij_kenteken = df_kenteken[df_kenteken['kenteken'] == kenteken]
+    emissiecode = float(rij_kenteken.iloc[0]['emissiecode_omschrijving'])
+    aantal_cilinders = rij_kenteken.iloc[0]['aantal_cilinders']
+    
+    voorspelling = reg.predict(np.array([[emissiecode, aantal_cilinders]]))[0]
+    
+    st.write('De voorspelde cilinderinhoud is:', voorspelling)
 
 
 # In[ ]:
