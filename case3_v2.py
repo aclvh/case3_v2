@@ -238,24 +238,42 @@ def rdw_data():
     ######################################################################################
     # Regressiemodel uitvoeren
     ######################################################################################
+    
+    # Een aantal kentekens en bijbehorende waarden inladen om het model uit te kunnen voeren
     df_kenteken = pd.read_csv('df_kenteken.csv')
-    
-    kenteken = st.text_input('Kenteken', '0001TJ')
-    st.write('Het ingevoerde kenteken is: ', kenteken)
-    
+
+    # Het model
     X = df_model[['emissiecode_omschrijving','aantal_cilinders']]
     y = df_model['cilinderinhoud']
     reg = LinearRegression().fit(X.values, y.values)
-    
-    
     
     rij_kenteken = df_kenteken[df_kenteken['kenteken'] == kenteken]
     emissiecode = float(rij_kenteken.iloc[0]['emissiecode_omschrijving'])
     aantal_cilinders = rij_kenteken.iloc[0]['aantal_cilinders']
     
-    voorspelling = reg.predict(np.array([[emissiecode, aantal_cilinders]]))[0]
+    voorspelling_cilinderinhoud = reg.predict(np.array([[emissiecode, aantal_cilinders]]))[0]
+    echte_cilinderinhoud = rij_kenteken.iloc[0]['cilinderinhoud']
     
-    st.write('De voorspelde cilinderinhoud is:', voorspelling)
+    # Uitleg model
+    regressiescore = reg.score(X.values, y.values)
+    reg_emissie = reg.coef_[0]
+    reg_cil = reg.coef_[1]
+    intercept = reg.intercept_
+    st.write("Het model heeft een regressiescore", regressiescore, "en bevat de volgende parameters:")
+    st.write("* De regressiecoëfficiënt van 'emissiecode_omschijving' is:", reg_emissie)
+    st.write("* De regressiecoëfficiënt van 'aantal_cilinders' is:", reg_cil)
+    st.write("* Het snijpunt bij de y-as is:", intercept)
+    
+    # Deel kentekens en bijbehorende waarden tonen
+    deel_df_kenteken = df_kenteken.sort_values('emissiecode_omschrijving').iloc[30:40][:]
+    st.write(deel_df_kenteken.head(10))
+
+    # Kenteken invoeren
+    kenteken = st.text_input('Kenteken', '0001TJ')
+    st.write('Het ingevoerde kenteken is: ', kenteken)
+    
+    st.write('De voorspelde cilinderinhoud is:', voorspelling_cilinderinhoud)
+    st.write('De echte cilinderinhoud is:')
 
 
 # In[ ]:
