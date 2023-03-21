@@ -242,6 +242,14 @@ def rdw_data():
     # Een aantal kentekens en bijbehorende waarden inladen om het model uit te kunnen voeren
     df_kenteken = pd.read_csv('df_kenteken.csv')
 
+    # Deel kentekens en bijbehorende waarden tonen
+    deel_df_kenteken = df_kenteken.sort_values('emissiecode_omschrijving').iloc[30:40][:]
+    st.write(deel_df_kenteken.head(10))
+    
+    # Kenteken invoeren
+    kenteken = st.text_input('Kenteken', '0001TJ')
+    st.write('Het ingevoerde kenteken is: ', kenteken)
+    
     # Het model
     X = df_model[['emissiecode_omschrijving','aantal_cilinders']]
     y = df_model['cilinderinhoud']
@@ -263,14 +271,6 @@ def rdw_data():
     st.write("* De regressiecoëfficiënt van 'emissiecode_omschijving' is:", reg_emissie)
     st.write("* De regressiecoëfficiënt van 'aantal_cilinders' is:", reg_cil)
     st.write("* Het snijpunt bij de y-as is:", intercept)
-    
-    # Deel kentekens en bijbehorende waarden tonen
-    deel_df_kenteken = df_kenteken.sort_values('emissiecode_omschrijving').iloc[30:40][:]
-    st.write(deel_df_kenteken.head(10))
-
-    # Kenteken invoeren
-    kenteken = st.text_input('Kenteken', '0001TJ')
-    st.write('Het ingevoerde kenteken is: ', kenteken)
     
     st.write('De voorspelde cilinderinhoud is:', voorspelling_cilinderinhoud)
     st.write('De echte cilinderinhoud is:')
