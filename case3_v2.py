@@ -98,7 +98,7 @@ def laadpaaldata():
     import streamlit as st
     import pandas as pd
     
-    st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')    
+    st.markdown(f'# {list(page_names_to_funcs.keys())[2]}')    
     
     # Informatie over wat er te lezen is op deze pagina
     st.write("""
@@ -132,48 +132,61 @@ def rdw_data():
     import seaborn as sns
     from sklearn.linear_model import LinearRegression
     
-    st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')    
+#     st.markdown(f'# {list(page_names_to_funcs.keys())[1]}')    
     
     # Informatie over wat er te lezen is op deze pagina
     st.write("""
+        # RDW datasets
         Op deze pagina is informatie te lezen over de informatie die is verkregen uit de twee gekozen datasets
         van de RDW:
         1. Open-Data-RDW-Gekentekende_voertuigen
         2. Open-Data-RDW-Gekentekende_voertuigen_brandstof
         Deze zijn met behulp van de volgende code ingeladen:""")
     
+    st.write("""
+        Aangezien de datasets bestaan uit respectievelijk 15.1 miljoen rijen met 92 kolommen en 14.4 miljoen rijen met
+        36 kolommen kan een normale laptop dit vanwege de grootte niet inladen.
+        
+        Om deze bestanden te kunnen gebruiken zijn een aantal kolommen geselecteerd die nodig waren voor specifieke
+        grafieken om de bestanden wel in te kunnen laden, aangezien de bestanden dan minder groot zijn.
+        Ook is gefilterd op enkel de voertuigsoort, 'personenauto'.
+        Op deze manier kunnen de benodigde kolommen en rijen van de datasets wel ingeladen en samengevoegd worden.
+        Vervolgens wordt het samengevoegde bestand omgezet naar een csv bestand, zodat werken met de dataset sneller
+        gaat.
+        """)
+    
     # API en data inladen
-    code_API ="""
-        # Bestand 'Gekentekende_voertuigen' inladen
-        selectie_voertuigen = 'kenteken, voertuigsoort, merk, aantal_zitplaatsen, eerste_kleur, aantal_cilinders, cilinderinhoud, maximum_trekken_massa_geremd, datum_eerste_tenaamstelling_in_nederland, catalogusprijs, lengte, breedte, wielbasis'
+#     code_API ="""
+#         # Bestand 'Gekentekende_voertuigen' inladen
+#         selectie_voertuigen = 'kenteken, voertuigsoort, merk, aantal_zitplaatsen, eerste_kleur, aantal_cilinders, cilinderinhoud, maximum_trekken_massa_geremd, datum_eerste_tenaamstelling_in_nederland, catalogusprijs, lengte, breedte, wielbasis'
 
-        client_1 = Socrata("opendata.rdw.nl", None)
-        elektrische_voertuigen = client_1.get("m9d7-ebf2",
-                                              limit = 15200000,
-                                              where = "voertuigsoort='Personenauto'",
-                                              select = selectie_voertuigen)
+#         client_1 = Socrata("opendata.rdw.nl", None)
+#         elektrische_voertuigen = client_1.get("m9d7-ebf2",
+#                                               limit = 15200000,
+#                                               where = "voertuigsoort='Personenauto'",
+#                                               select = selectie_voertuigen)
 
-        elektrische_voertuigen_df = pd.DataFrame.from_records(elektrische_voertuigen)
-        elektrische_voertuigen_df
+#         elektrische_voertuigen_df = pd.DataFrame.from_records(elektrische_voertuigen)
+#         elektrische_voertuigen_df
         
         
-        # Bestand 'Gekentekende_voertuigen brandstof' inladen
-        selectie_brandstof = 'kenteken, brandstof_omschrijving, emissiecode_omschrijving'
+#         # Bestand 'Gekentekende_voertuigen brandstof' inladen
+#         selectie_brandstof = 'kenteken, brandstof_omschrijving, emissiecode_omschrijving'
 
-        client = Socrata("opendata.rdw.nl", None)
-        brandstof = client.get("8ys7-d773",
-                               limit = 14500000,
-                               select = selectie_brandstof)
+#         client = Socrata("opendata.rdw.nl", None)
+#         brandstof = client.get("8ys7-d773",
+#                                limit = 14500000,
+#                                select = selectie_brandstof)
 
-        brandstof_df = pd.DataFrame.from_records(brandstof)
-        brandstof_df['brandstof_omschrijving'].value_counts()
-        brandstof_df
+#         brandstof_df = pd.DataFrame.from_records(brandstof)
+#         brandstof_df['brandstof_omschrijving'].value_counts()
+#         brandstof_df
         
-        # Bestanden samenvoegen en omzetten naar csv bestand
-        df = pd.merge(elektrische_voertuigen_df, brandstof_df, how = "inner", on = "kenteken")
-        df.to_csv('samengevoegd.csv')
-        """
-    st.code(code_API, language = "python")
+#         # Bestanden samenvoegen en omzetten naar csv bestand
+#         df = pd.merge(elektrische_voertuigen_df, brandstof_df, how = "inner", on = "kenteken")
+#         df.to_csv('samengevoegd.csv')
+#         """
+#     st.code(code_API, language = "python")
     
     st.write("""
         Aangezien de datasets bestaan uit respectievelijk 15.1 miljoen rijen met 92 kolommen en 14.4 miljoen rijen met
@@ -234,7 +247,7 @@ def rdw_data():
                            yaxis_title = "Aantal auto's",
                            legend_title = 'Auto merk')
 
-    st.plotly_chart(fig_mer)
+    st.plotly_chart(fig_merk)
     
     ######################################################################################
     # Plot met cum aantal auto's per brandstof omschrijving
