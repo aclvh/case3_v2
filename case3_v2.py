@@ -170,10 +170,10 @@ def rdw_data():
         brandstof_df
         
         # Bestanden samenvoegen en omzetten naar csv bestand
-        df = pd.merge(elektrische_voertuigen_df, brandstof_df, how = 'inner', on = 'kenteken')
+        df = pd.merge(elektrische_voertuigen_df, brandstof_df, how = "inner", on = "kenteken")
         df.to_csv('samengevoegd.csv')
         """
-    st.code(code_API, language = 'python')
+    st.code(code_API, language = "python")
     
     st.write("""
         Aangezien de datasets bestaan uit respectievelijk 15.1 miljoen rijen met 92 kolommen en 14.4 miljoen rijen met
@@ -194,8 +194,8 @@ def rdw_data():
     
     #cirkel diagram van brandstof omschrijving
     fig_cirkel = px.pie(df_cirkel,
-                        values = 'Hoeveelheid', 
-                        names = 'Type brandstof')
+                        values = "Hoeveelheid", 
+                        names = "Type brandstof")
 
     fig_cirkel.update_layout(title = "Aantal verkochte auto's per brandstof omschrijving (vanaf 1950 tot heden)",
                              legend_title = "Brandstof omschrijving")
@@ -205,9 +205,9 @@ def rdw_data():
     ######################################################################################
     # Plot 1 met cum aantal auto's per brandstof omschrijving
     ######################################################################################
-    df_fig2 = pd.read_csv('df_fig1.csv')
+    df_fig1 = pd.read_csv("df_fig1.csv")
     
-    fig1 = px.line(df_fig2,
+    fig1 = px.line(df_fig1,
                y = "cum aantal",
                x = "datum",
                color = "brandstof_omschrijving")
@@ -221,16 +221,50 @@ def rdw_data():
     st.plotly_chart(fig1)
     
     ######################################################################################
+    # Plot met top 10 vrekochte merken elektrische auto's
+    ######################################################################################
+    df_merk = pd.read_csv("df_merk.csv")
+    
+    fig_merk = px.histogram(df_merk,
+                        x = "merk",
+                        y = 'aantal_verkocht')
+
+    fig_merk.update_layout(title = "Cumulatief aantal auto's per merk",
+                           xaxis_title = "Auto merk",
+                           yaxis_title = "Aantal auto's",
+                           legend_title = 'Auto merk')
+
+    st.plotly_chart(fig_mer)
+    
+    ######################################################################################
+    # Plot met cum aantal auto's per brandstof omschrijving
+    ######################################################################################
+    df_fig2 = pd.read_csv("df_fig2.csv")
+    
+    fig2 = px.line(df_fig2,
+               y = "cum aantal",
+               x = "datum",
+               color = "merk")
+
+    fig2.update_layout(title = "Cumulatief aantal auto's per merk",
+                   xaxis_title = "Datum",
+                   yaxis_title = "Aantal auto's",
+                   legend_title = "Merk",
+                   xaxis = dict(rangeslider = dict(visible = True)))
+    
+    st.plotly_chart(fig2)
+    
+    ######################################################################################
     # Regressiemodel met 2 losse plotjes
     ######################################################################################
-    df_model = pd.read_csv('df_model.csv')
+    df_model = pd.read_csv("df_model.csv")
     
     fig_model1 = px.scatter(df_model,
-                        x = 'emissiecode_omschrijving',
-                        y = 'cilinderinhoud',
+                        x = "emissiecode_omschrijving",
+                        y ="cilinderinhoud",
                         opacity = 0.65,
-                        trendline='ols',
-                        trendline_color_override='darkblue')
+                        trendline = "ols",
+                        trendline_color_override = "red")
 
     fig_model1.update_layout(title = "Regressie tussen de emissiecode en de cilinderinhoud",
                              xaxis_title = "Emissiecode omschrijving",
@@ -239,10 +273,10 @@ def rdw_data():
     st.plotly_chart(fig_model1)
     
     fig_model2 = px.scatter(df_model,
-                        x = 'aantal_cilinders',
-                        y = 'cilinderinhoud',
-                        trendline='ols',
-                        trendline_color_override = 'red')
+                        x = "aantal_cilinders",
+                        y = "cilinderinhoud",
+                        trendline = "ols",
+                        trendline_color_override = "red")
 
     fig_model2.update_layout(title = "Regressie tussen het aantal cilinders en de cilinderinhoud",
                              xaxis_title = "Aantal cilinders",
@@ -255,31 +289,31 @@ def rdw_data():
     ######################################################################################
     
     # Een aantal kentekens en bijbehorende waarden inladen om het model uit te kunnen voeren
-    df_kenteken = pd.read_csv('df_kenteken.csv')
+    df_kenteken = pd.read_csv("df_kenteken.csv")
 
     # Deel kentekens en bijbehorende waarden tonen
-    deel_df_kenteken = df_kenteken.sort_values('emissiecode_omschrijving').iloc[30:40][:]
+    deel_df_kenteken = df_kenteken.sort_values("emissiecode_omschrijving").iloc[30:40][:]
     st.write(deel_df_kenteken.head(10))
     
     # Kenteken invoeren
-    kenteken = st.text_input('Kenteken', '0050PK')
-    st.write('Het ingevoerde kenteken is: ', kenteken)
+    kenteken = st.text_input("Kenteken", "0050PK")
+    st.write("Het ingevoerde kenteken is: ", kenteken)
     
     # Het model
-    X = df_model[['emissiecode_omschrijving','aantal_cilinders']]
-    y = df_model['cilinderinhoud']
+    X = df_model[["emissiecode_omschrijving","aantal_cilinders"]]
+    y = df_model["cilinderinhoud"]
     reg = LinearRegression().fit(X.values, y.values)
     
-    rij_kenteken = df_kenteken[df_kenteken['kenteken'] == kenteken]
-    emissiecode = float(rij_kenteken.iloc[0]['emissiecode_omschrijving'])
-    aantal_cilinders = rij_kenteken.iloc[0]['aantal_cilinders']
+    rij_kenteken = df_kenteken[df_kenteken["kenteken"] == kenteken]
+    emissiecode = float(rij_kenteken.iloc[0]["emissiecode_omschrijving"])
+    aantal_cilinders = rij_kenteken.iloc[0]["aantal_cilinders"]
     
     voorspelling_cilinderinhoud = reg.predict(np.array([[emissiecode, aantal_cilinders]]))[0]
-    echte_cilinderinhoud = rij_kenteken.iloc[0]['cilinderinhoud']
+    echte_cilinderinhoud = rij_kenteken.iloc[0]["cilinderinhoud"]
     
     # Voorspelling
-    st.write('De voorspelde cilinderinhoud is:', voorspelling_cilinderinhoud)
-    st.write('De echte cilinderinhoud is:', echte_cilinderinhoud)
+    st.write("De voorspelde cilinderinhoud is:", voorspelling_cilinderinhoud)
+    st.write("De echte cilinderinhoud is:", echte_cilinderinhoud)
     
     # Uitleg model
     regressiescore = reg.score(X.values, y.values)
