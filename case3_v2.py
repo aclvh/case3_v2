@@ -188,6 +188,21 @@ def rdw_data():
         """)
     
     ######################################################################################
+    # Plot crikeldiagram brandstof omschrijving
+    ######################################################################################
+    df_cirkel = pd.read_csv('df_cirkel.csv')
+    
+    #cirkel diagram van brandstof omschrijving
+    fig_cirkel = px.pie(df_cirkel,
+                        values = 'Hoeveelheid', 
+                        names = 'Type brandstof')
+
+    fig_cirkel.update_layout(title = "Aantal verkochte auto's per brandstof omschrijving (vanaf 1950 tot heden)",
+                             legend_title = "Brandstof omschrijving")
+
+    st.plotly_chart(fig_cirkel)
+    
+    ######################################################################################
     # Plot 1 met cum aantal auto's per brandstof omschrijving
     ######################################################################################
     df_fig2 = pd.read_csv('df_fig1.csv')
